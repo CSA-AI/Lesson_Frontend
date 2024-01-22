@@ -38,15 +38,15 @@ search_exclude: true
     }
 
     .tab-content {
-	  margin: 0 auto;
+	    margin: 0 auto;
       display: none;
       padding: 20px;
       box-sizing: border-box;
       width: 300px;
       border: 1px solid #3498db;
       -moz-border-radius: 0px;
-	  -webkit-border-radius: 0px 0px 5px 5px;
-	  border-radius: 0px 0px 5px 5px; 
+	    -webkit-border-radius: 0px 0px 5px 5px;
+	    border-radius: 0px 0px 5px 5px; 
       background-color: #070707;
     }
 
@@ -95,18 +95,20 @@ search_exclude: true
 <div id="signup-tab-content" class="tab-content">
   <h2 style="text-align: center;">Sign Up</h2>
   <form>
-	<input type="text" id="new-name" name="new-name" placeholder="name" required>
+	<input type="text" id="new-name" name="name" placeholder="name" required>
     <br>
-    <input type="text" id="new-email" name="new-email" placeholder="email" required>
+    <input type="text" id="new-email" name="email" placeholder="email" required>
     <br>
-    <input type="password" id="new-password" name="new-password" placeholder="password" required>
+    <input type="password" id="new-password" name="password" placeholder="password" required>
     <br>
-    <button id="signUpButton" type="submit" class="login-button">Sign Up</button>
+	<input type="date" id="new-dob" name="dob" required>
+	<br>
+    <button id="signUpButton" type="submit" class="login-button" onclick="signUp()">Sign Up</button>
   </form>
 </div>
 
 <script>
-  const url = 'http://localhost:8085/api/person/update';
+  const signup_url = 'http://localhost:8085/api/person/update?';
 
   function showTab(tabId) {
     // Hide all tab contents
@@ -117,18 +119,20 @@ search_exclude: true
   }
 
   function signUp() {
-	let email = document.getElementById("new-email").value;
-	let password = document.getElementById("new-password").value;
-	let name = document.getElementById("new-name").value;
+    let email = document.getElementById("new-email").value;
+    let password = document.getElementById("new-password").value;
+    let name = document.getElementById("new-name").value;
+    let dob = document.getElementById("new-dob").value;
 
-	const params = {
-        email: encodeURIComponent(email),
-        password: encodeURIComponent(password),
-        name: encodeURIComponent(name)
+    const params = {
+      "email": encodeURIComponent(email),
+      "password": encodeURIComponent(password),
+      "name": encodeURIComponent(name),
+      "dob": encodeURIComponent(dob)
     };
 
-	fetch(`${url}?${new URLSearchParams(params)}`, {
-        method: 'PUT',
+    fetch(url + URLSearchParams(params), {
+        method: 'POST',
       })
         .then(response => response.json())
         .then(data => console.log(data))
@@ -136,22 +140,22 @@ search_exclude: true
   }
 
   function logIn() {
-	let email = document.getElementById("new-email").value;
-	let password = document.getElementById("new-password").value;
-	let name = document.getElementById("new-name").value;
+    let email = document.getElementById("new-email").value;
+    let password = document.getElementById("new-password").value;
+    let name = document.getElementById("new-name").value;
 
-	const params = {
-        email: encodeURIComponent(email),
-        password: encodeURIComponent(password),
-        name: encodeURIComponent(name)
+    const params = {
+      email: encodeURIComponent(email),
+      password: encodeURIComponent(password),
+      name: encodeURIComponent(name)
     };
 
-	fetch(`${url}?${new URLSearchParams(params)}`, {
-        method: 'PUT',
-      })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error('Error:', error));
+    fetch(`${url}?${new URLSearchParams(params)}`, {
+      method: 'GET',
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
   }
 </script>
 
