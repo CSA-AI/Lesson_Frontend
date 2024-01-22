@@ -108,7 +108,7 @@ search_exclude: true
 </div>
 
 <script>
-  const signup_url = 'http://localhost:8085/api/person/update?';
+  const signup_url = 'http://localhost:8085/api/person/post?';
 
   function showTab(tabId) {
     // Hide all tab contents
@@ -125,13 +125,15 @@ search_exclude: true
     let dob = document.getElementById("new-dob").value;
 
     const params = {
-      "email": encodeURIComponent(email),
+      "email": email,
       "password": encodeURIComponent(password),
       "name": encodeURIComponent(name),
       "dob": encodeURIComponent(dob)
     };
 
-    fetch(url + URLSearchParams(params), {
+    console.log("fetch url: " + signup_url + new URLSearchParams(params));
+
+    fetch(signup_url + new URLSearchParams(params), {
         method: 'POST',
       })
         .then(response => response.json())
