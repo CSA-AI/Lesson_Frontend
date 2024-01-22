@@ -1,0 +1,102 @@
+---
+layout: base
+permalink: /sign_in/
+title: Sign In
+search_exclude: true
+---
+
+<style>
+    body {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .tabs {
+	  margin: 0 auto;
+	  margin: 10x;
+      display: flex;
+      justify-content: space-around;
+      width: 300px;
+      background-color: #3498db;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .tab {
+      padding: 15px;
+      color: #000000;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .tab:hover {
+      background-color: #2980b9;
+    }
+
+    .tab-content {
+	  margin: 0 auto;
+      display: none;
+      padding: 20px;
+      box-sizing: border-box;
+      width: 300px;
+      border: 1px solid #3498db;
+      border-radius: 5px;
+      background-color: #070707;
+    }
+
+    #login-tab-content {
+      display: block;
+    }
+
+	input {
+    	display: block;
+        margin : 0 auto;
+    }
+
+	button {
+        display: block;
+        margin : 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab" onclick="showTab('login-tab')">Login</div>
+  <div class="tab" onclick="showTab('signup-tab')">Sign Up</div>
+</div>
+
+<div id="login-tab-content" class="tab-content">
+  <h2 style="text-align: center;">Login</h2>
+  <form>
+    <input type="text" id="username" name="username" placeholder="username" required>
+    <br>
+    <input type="password" id="password" name="password" placeholder="password" required>
+    <br>
+    <button type="submit" class="Button">Login</button>
+  </form>
+</div>
+
+<div id="signup-tab-content" class="tab-content">
+  <h2 style="text-align: center;">Sign Up</h2>
+  <form>
+    <input type="text" id="new-username" name="new-username" placeholder="username" required>
+    <br>
+    <input type="password" id="new-password" name="new-password" placeholder="password" required>
+    <br>
+    <button type="submit">Sign Up</button>
+  </form>
+</div>
+
+<script>
+  function showTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+
+    // Show the selected tab content
+    document.getElementById(tabId + '-content').style.display = 'block';
+  }
+</script>
+
+
