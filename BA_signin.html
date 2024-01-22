@@ -21,6 +21,9 @@ search_exclude: true
       background-color: #3498db;
       border-radius: 5px;
       overflow: hidden;
+	  -moz-border-radius: 0px;
+	  -webkit-border-radius: 5px 5px 0px 0px;
+	  border-radius: 5px 5px 0px 0px; 
     }
 
     .tab {
@@ -41,7 +44,9 @@ search_exclude: true
       box-sizing: border-box;
       width: 300px;
       border: 1px solid #3498db;
-      border-radius: 5px;
+      -moz-border-radius: 0px;
+	  -webkit-border-radius: 0px 0px 5px 5px;
+	  border-radius: 0px 0px 5px 5px; 
       background-color: #070707;
     }
 
@@ -52,11 +57,18 @@ search_exclude: true
 	input {
     	display: block;
         margin : 0 auto;
+		border: 0;
+		padding: 1em;
     }
 
-	button {
+	textarea:focus, input:focus{
+    	outline: none;
+	}
+
+	.login-button {
         display: block;
         margin : 0 auto;
+		border-color: white !important;
     }
   </style>
 </head>
@@ -70,32 +82,76 @@ search_exclude: true
 <div id="login-tab-content" class="tab-content">
   <h2 style="text-align: center;">Login</h2>
   <form>
-    <input type="text" id="username" name="username" placeholder="username" required>
+	<input type="text" id="name" name="name" placeholder="name" required>
+    <br>
+    <input type="text" id="email" name="email" placeholder="email" required>
     <br>
     <input type="password" id="password" name="password" placeholder="password" required>
     <br>
-    <button type="submit" class="Button">Login</button>
+    <button id="logInButton" type="submit" class="login-button">Login</button>
   </form>
 </div>
 
 <div id="signup-tab-content" class="tab-content">
   <h2 style="text-align: center;">Sign Up</h2>
   <form>
-    <input type="text" id="new-username" name="new-username" placeholder="username" required>
+	<input type="text" id="new-name" name="new-name" placeholder="name" required>
+    <br>
+    <input type="text" id="new-email" name="new-email" placeholder="email" required>
     <br>
     <input type="password" id="new-password" name="new-password" placeholder="password" required>
     <br>
-    <button type="submit">Sign Up</button>
+    <button id="signUpButton" type="submit" class="login-button">Sign Up</button>
   </form>
 </div>
 
 <script>
+  const url = 'http://localhost:8085/api/person/update';
+
   function showTab(tabId) {
     // Hide all tab contents
     document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
 
     // Show the selected tab content
     document.getElementById(tabId + '-content').style.display = 'block';
+  }
+
+  function signUp {
+	let email = document.getElementById("new-email").value;
+	let password = document.getElementById("new-password").value;
+	let name = document.getElementById("new-name").value;
+
+	const params = {
+        email: encodeURIComponent(email),
+        password: encodeURIComponent(password),
+        name: encodeURIComponent(name)
+    };
+
+	fetch(`${url}?${new URLSearchParams(params)}`, {
+        method: 'PUT',
+      })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
+  }
+
+  function logIn {
+	let email = document.getElementById("new-email").value;
+	let password = document.getElementById("new-password").value;
+	let name = document.getElementById("new-name").value;
+
+	const params = {
+        email: encodeURIComponent(email),
+        password: encodeURIComponent(password),
+        name: encodeURIComponent(name)
+    };
+
+	fetch(`${url}?${new URLSearchParams(params)}`, {
+        method: 'PUT',
+      })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
   }
 </script>
 
