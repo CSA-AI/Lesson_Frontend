@@ -5,10 +5,20 @@ title: Profile
 search_exclude: false
 ---
 <script>
+
+
+    const decode = token => decodeURIComponent(atob(token.split('.')[1].replace('-', '+').replace('_', '/')).split('').map(c => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`).join(''));
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    email = (JSON.parse(decode(getCookie("token")))).sub;
+    console.log(id);
+    
     function update() {
         //pull from backend and update values
         // placeholders
-        email="ethan.zhao.us@gmail.com"
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
         }
@@ -35,22 +45,39 @@ search_exclude: false
         console.log(currentDate);
         steps = document.getElementById("steps").innerHTML;
         calories = document.getElementById("calories").innerHTML;
-        
-        fetch("https://jsonplaceholder.typicode.com/todos", {
-            method: "POST",
-            body: JSON.stringify({
-                userId: 1,
-                title: "Fix my bugs",
-                completed: false
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        });
-        alert("database updated!")
     }
     function delUser() {
-        //backend self.delete()
+        const params = {
+            email: email
+        };
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+          "email": 1
+        });
+
+        var requestOptions = {
+          method: 'DELETE',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+        fetch("http://localhost:8085/api/person/delete?email=lexb@gmail.com", requestOptions)
+          .then(response => response.text())
+          .then(data => {
+                console.log(data);
+                if (data.status!=401 || data.status!=400) {
+                    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    alert("user deleted!")
+                    //window.location.replace("/Lesson_Frontend/sign_in/");
+                } else {
+                    console.log("bad email and password");
+                }
+          })
+          .catch(error => console.log('error', error));        
     }
 </script>
 
@@ -71,4 +98,7 @@ search_exclude: false
         <button onClick="delUser()">Delete user</button>
     </div>
 </div>
+
+<script>
+</script>
 </body>
