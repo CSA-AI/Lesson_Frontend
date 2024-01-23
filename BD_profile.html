@@ -14,6 +14,7 @@ search_exclude: false
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
     email = (JSON.parse(decode(getCookie("token")))).sub;
+    id = ((JSON.parse(decode(getCookie("token")))).id).toString();
     console.log(id);
     
     function update() {
@@ -40,25 +41,38 @@ search_exclude: false
         date = new Date();
         day = date.getDate();
         month = date.getMonth() + 1;
-        year = date.getFullYear();
+        year = (date.getFullYear()) -2000;
         currentDate = `0${month}-${day}-${year}`;
         console.log(currentDate);
         steps = document.getElementById("steps").innerHTML;
         calories = document.getElementById("calories").innerHTML;
-
         
-    }
-    function delUser() {
-        const params = {
-            email: email
-        };
-
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
         var raw = JSON.stringify({
-          "email": 1
+          "id": id,
+          "date": currentDate,
+          "steps": steps,
+          "calories": calories
         });
+
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+        fetch("http://localhost:8085/api/person/setStats", requestOptions)
+          .then(response => response.text())
+          .then(result => alert("stats updated!"))
+          .catch(error => console.log('error', error));
+    }
+    function delUser() {
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
 
         var requestOptions = {
           method: 'DELETE',
@@ -67,7 +81,7 @@ search_exclude: false
           redirect: 'follow'
         };
 
-        fetch("http://localhost:8085/api/person/delete?email=lexb@gmail.com", requestOptions)
+        fetch("http://localhost:8085/api/person/delete?email=" + email, requestOptions)
           .then(response => response.text())
           .then(data => {
                 console.log(data);
@@ -92,10 +106,10 @@ search_exclude: false
         <div style="font-size: 18px;" id="welcome">Welcome!</div>
         <div style="font-size: 18px;">Number of steps: </div><div id="steps"></div>
         <div style="font-size: 18px;">Calories burnt: </div><div id="calories"></div>
-        <button onClick="update()">Update</button>
+        <button onClick="update()">Refresh</button>
         <div></div>
         <button onClick="edit()">Edit</button>
-        <button onClick="post()">Post</button>
+        <button onClick="post()">Update</button>
         <div></div>
         <button onClick="delUser()">Delete user</button>
     </div>
