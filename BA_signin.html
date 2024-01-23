@@ -150,8 +150,6 @@ search_exclude: true
       password: password
     };
 
-    console.log("login fetch url: " + login_url);
-    console.log("body: " + JSON.stringify(params))
     fetch(login_url, {
       method: 'POST',
       headers: {
@@ -162,49 +160,14 @@ search_exclude: true
     })
       
       .then(data => {
-        console.log(data);
-        if (data.status==200) {
-          console.log("authenticated");
-          window.location.replace("/stats.html");
+        document.cookie = "token=" + data.token + "; path=/";
+        if (data.status!=401) {
+          window.location.replace("/Lesson_Frontend/profile/");
         } else {
           console.log("bad email and password");
         }
       })
       .catch(error => console.error('Error:', error));
-  }
-
-  function logInXML() {
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-
-    const loginData = {
-        email: email,
-        password: password
-    };
-
-    console.log("login fetch url: " + login_url);
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', login_url, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                const data = JSON.parse(xhr.responseText);
-                console.log(data);
-                if (data.status == 200) {
-                    window.location.replace("/stats.html");
-                } else {
-                    console.log("bad email and password");
-                }
-            } else {
-                console.error('Error:', xhr.statusText);
-            }
-        }
-    };
-
-    xhr.send(JSON.stringify(loginData));
   }
 </script>
 
