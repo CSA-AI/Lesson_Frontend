@@ -1,0 +1,208 @@
+---
+layout: base
+permalink: /sign_in/
+title: Sign In
+search_exclude: true
+---
+
+<style>
+    body {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .tabs {
+	  margin: 0 auto;
+	  margin: 10x;
+      display: flex;
+      justify-content: space-around;
+      width: 300px;
+      background-color: #3498db;
+      border-radius: 5px;
+      overflow: hidden;
+	  -moz-border-radius: 0px;
+	  -webkit-border-radius: 5px 5px 0px 0px;
+	  border-radius: 5px 5px 0px 0px; 
+    }
+
+    .tab {
+      padding: 15px;
+      color: #000000;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .tab:hover {
+      background-color: #2980b9;
+    }
+
+    .tab-content {
+	    margin: 0 auto;
+      display: none;
+      padding: 20px;
+      box-sizing: border-box;
+      width: 300px;
+      border: 1px solid #3498db;
+      -moz-border-radius: 0px;
+	    -webkit-border-radius: 0px 0px 5px 5px;
+	    border-radius: 0px 0px 5px 5px; 
+      background-color: #070707;
+    }
+
+    #login-tab-content {
+      display: block;
+    }
+
+	input {
+    	display: block;
+        margin : 0 auto;
+		border: 0;
+		padding: 1em;
+    }
+
+	textarea:focus, input:focus{
+    	outline: none;
+	}
+
+	.login-button {
+        display: block;
+        margin : 0 auto;
+		border-color: white !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab" onclick="showTab('login-tab')">Login</div>
+  <div class="tab" onclick="showTab('signup-tab')">Sign Up</div>
+</div>
+
+<div id="login-tab-content" class="tab-content">
+  <h2 style="text-align: center;">Login</h2>
+  <form>
+    <input type="text" id="email" name="email" placeholder="email" required>
+    <br>
+    <input type="password" id="password" name="password" placeholder="password" required>
+    <br>
+    <button id="logInButton" type="submit" class="login-button" onclick="logIn()">Login</button>
+  </form>
+</div>
+
+<div id="signup-tab-content" class="tab-content">
+  <h2 style="text-align: center;">Sign Up</h2>
+  <form>
+	<input type="text" id="new-name" name="name" placeholder="name" required>
+    <br>
+    <input type="text" id="new-email" name="email" placeholder="email" required>
+    <br>
+    <input type="password" id="new-password" name="password" placeholder="password" required>
+    <br>
+	<input type="date" id="new-dob" name="dob" required>
+	<br>
+    <button id="signUpButton" type="submit" class="login-button" onclick="signUp()">Sign Up</button>
+  </form>
+</div>
+
+<script>
+  const signup_url = 'http://localhost:8085/api/person/post?';
+  const login_url = 'http://localhost:8085/authenticate';
+
+  function showTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+
+    // Show the selected tab content
+    document.getElementById(tabId + '-content').style.display = 'block';
+  }
+
+  function signUp() {
+    let email = document.getElementById("new-email").value;
+    let password = document.getElementById("new-password").value;
+    let name = document.getElementById("new-name").value;
+    let dob = document.getElementById("new-dob").value;
+
+    const params = {
+      "email": email,
+      "password": encodeURIComponent(password),
+      "name": encodeURIComponent(name),
+      "dob": encodeURIComponent(dob)
+    };
+
+    console.log("sign up fetch url: " + signup_url + new URLSearchParams(params));
+
+    fetch(signup_url + new URLSearchParams(params), {
+        method: 'POST',
+      })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
+  }
+
+  function logIn() {
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    const params = {
+      email: email,
+      password: password
+    };
+
+    console.log("login fetch url: " + login_url);
+    console.log("body: " + JSON.stringify(params))
+    fetch(login_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        if (data.status==200) {
+          window.location.replace("/stats.html");
+        } else {
+          console.log("bad email and password");
+        }
+      })
+      .catch(error => console.error('Error:', error));
+  }
+
+  function logInXML() {
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    const loginData = {
+        email: email,
+        password: password
+    };
+
+    console.log("login fetch url: " + login_url);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', login_url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                console.log(data);
+                if (data.status == 200) {
+                    window.location.replace("/stats.html");
+                } else {
+                    console.log("bad email and password");
+                }
+            } else {
+                console.error('Error:', xhr.statusText);
+            }
+        }
+    };
+
+    xhr.send(JSON.stringify(loginData));
+  }
+</script>
+
+
