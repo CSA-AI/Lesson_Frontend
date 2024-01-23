@@ -86,8 +86,8 @@ search_exclude: true
     <br>
     <input type="password" id="password" name="password" placeholder="password" required>
     <br>
-    <button id="logInButton" type="submit" class="login-button" onclick="logIn()">Login</button>
   </form>
+  <button id="logInButton" type="submit" class="login-button" onclick="logIn()">Login</button>
 </div>
 
 <div id="signup-tab-content" class="tab-content">
@@ -101,8 +101,9 @@ search_exclude: true
     <br>
 	<input type="date" id="new-dob" name="dob" required>
 	<br>
-    <button id="signUpButton" type="submit" class="login-button" onclick="signUp()">Sign Up</button>
+    
   </form>
+  <button id="signUpButton" type="submit" class="login-button" onclick="signUp()">Sign Up</button>
 </div>
 
 <script>
@@ -157,11 +158,13 @@ search_exclude: true
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(params),
+      withCredentials: true
     })
-      .then(response => response.json())
+      
       .then(data => {
         console.log(data);
         if (data.status==200) {
+          console.log("authenticated");
           window.location.replace("/stats.html");
         } else {
           console.log("bad email and password");
