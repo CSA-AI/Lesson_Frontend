@@ -16,15 +16,31 @@ search_exclude: false
     email = (JSON.parse(decode(getCookie("token")))).sub;
     id = ((JSON.parse(decode(getCookie("token")))).id).toString();
     console.log(id);
+
+        date = new Date();
+        day = date.getDate();
+        month = date.getMonth() + 1;
+        year = (date.getFullYear()) -2000;
+        currentDate = `0${month}-${day}-${year}`;
+        console.log(currentDate)
     
     function update() {
         //pull from backend and update values
         // placeholders
-        function getRandomInt(max) {
-            return Math.floor(Math.random() * max);
-        }
-        steps = (getRandomInt(100));
-        calories = (getRandomInt(1000));
+        var requestOptions = {
+          method: 'GET',
+          redirect: 'follow'
+        };
+
+        fetch("http://localhost:8085/api/person/" + id, requestOptions)
+          .then(response => response.text())
+          .then(result => {
+            const stats = JSON.parse(result).stats[currentDate];
+            document.getElementById("welcome").innerHTML = "Welcome " + email + "!";
+            document.getElementById("steps").innerHTML = stats ? stats.steps : "N/A";
+            document.getElementById("calories").innerHTML = stats ? stats.calories : "N/A";
+          })
+          .catch(error => console.log('error', error));
         //placeholders
         document.getElementById("welcome").innerHTML = "Welcome " + email + "!";
         document.getElementById("steps").innerHTML = steps;
@@ -38,11 +54,6 @@ search_exclude: false
         document.getElementById("calories").innerHTML = calories;
     }
     function post() {
-        date = new Date();
-        day = date.getDate();
-        month = date.getMonth() + 1;
-        year = (date.getFullYear()) -2000;
-        currentDate = `0${month}-${day}-${year}`;
         console.log(currentDate);
         steps = document.getElementById("steps").innerHTML;
         calories = document.getElementById("calories").innerHTML;
@@ -88,12 +99,17 @@ search_exclude: false
                 if (data.status!=401 || data.status!=400) {
                     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                     alert("user deleted!")
-                    //window.location.replace("/Lesson_Frontend/sign_in/");
+                    window.location.replace("/Lesson_Frontend/sign_in/");
                 } else {
                     console.log("bad email and password");
                 }
           })
           .catch(error => console.log('error', error));        
+    }
+    function signOut() {
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        alert("signed out!")
+        window.location.replace("/Lesson_Frontend/sign_in/");   
     }
 </script>
 
@@ -110,6 +126,8 @@ search_exclude: false
         <div></div>
         <button onClick="edit()">Edit</button>
         <button onClick="post()">Update</button>
+        <div></div>
+        <button onClick="signOut()">Sign Out</button>
         <div></div>
         <button onClick="delUser()">Delete user</button>
     </div>
