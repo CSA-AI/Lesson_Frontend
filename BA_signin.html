@@ -82,13 +82,11 @@ search_exclude: true
 <div id="login-tab-content" class="tab-content">
   <h2 style="text-align: center;">Login</h2>
   <form>
-	<input type="text" id="name" name="name" placeholder="name" required>
-    <br>
     <input type="text" id="email" name="email" placeholder="email" required>
     <br>
     <input type="password" id="password" name="password" placeholder="password" required>
     <br>
-    <button id="logInButton" type="submit" class="login-button">Login</button>
+    <button id="logInButton" type="submit" class="login-button" onclick="logIn()">Login</button>
   </form>
 </div>
 
@@ -109,6 +107,7 @@ search_exclude: true
 
 <script>
   const signup_url = 'http://localhost:8085/api/person/post?';
+  const login_url = 'http://localhost:8085/authenticate';
 
   function showTab(tabId) {
     // Hide all tab contents
@@ -131,7 +130,7 @@ search_exclude: true
       "dob": encodeURIComponent(dob)
     };
 
-    console.log("fetch url: " + signup_url + new URLSearchParams(params));
+    console.log("sign up fetch url: " + signup_url + new URLSearchParams(params));
 
     fetch(signup_url + new URLSearchParams(params), {
         method: 'POST',
@@ -142,22 +141,67 @@ search_exclude: true
   }
 
   function logIn() {
-    let email = document.getElementById("new-email").value;
-    let password = document.getElementById("new-password").value;
-    let name = document.getElementById("new-name").value;
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
 
     const params = {
-      email: encodeURIComponent(email),
-      password: encodeURIComponent(password),
-      name: encodeURIComponent(name)
+      email: email,
+      password: password
     };
 
-    fetch(`${url}?${new URLSearchParams(params)}`, {
-      method: 'GET',
+    console.log("login fetch url: " + login_url);
+    console.log("body: " + JSON.stringify(params))
+    fetch(login_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
     })
       .then(response => response.json())
-      .then(data => console.log(data))
+      .then(data => {
+        console.log(data);
+        if (data.status==200) {
+          window.location.replace("/stats.html");
+        } else {
+          console.log("bad email and password");
+        }
+      })
       .catch(error => console.error('Error:', error));
+  }
+
+  function logInXML() {
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    const loginData = {
+        email: email,
+        password: password
+    };
+
+    console.log("login fetch url: " + login_url);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', login_url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                console.log(data);
+                if (data.status == 200) {
+                    window.location.replace("/stats.html");
+                } else {
+                    console.log("bad email and password");
+                }
+            } else {
+                console.error('Error:', xhr.statusText);
+            }
+        }
+    };
+
+    xhr.send(JSON.stringify(loginData));
   }
 </script>
 
