@@ -87,7 +87,7 @@ search_exclude: true
     <input type="password" id="password" name="password" placeholder="password" required>
     <br>
   </form>
-  <button id="logInButton" type="submit" class="login-button" onclick="logIn()">Login</button>
+  <button id="logInButton" class="login-button" onclick="logIn()">Login</button>
 </div>
 
 <div id="signup-tab-content" class="tab-content">
@@ -100,10 +100,10 @@ search_exclude: true
     <input type="password" id="new-password" name="password" placeholder="password" required>
     <br>
 	<input type="date" id="new-dob" name="dob" required>
-	<br>
-    
+	
   </form>
-  <button id="signUpButton" type="submit" class="login-button" onclick="signUp()">Sign Up</button>
+  <br>
+  <button id="signUpButton" class="login-button" onclick="signUp()">Sign Up</button>
 </div>
 
 <script>
@@ -166,12 +166,12 @@ search_exclude: true
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(params),
-      withCredentials: true
     })
       .then(response => response.json())
       .then(data => {
         console.log(data);
         document.cookie = "token=" + data.token + "; path=/";
+        console.log(data)
         if (data.status!=401) {
           window.location.replace("/Lesson_Frontend/profile/");
         } else {
@@ -181,5 +181,4 @@ search_exclude: true
       .catch(error => console.error('Error:', error));
   }
 </script>
-
 

@@ -1,0 +1,138 @@
+---
+layout: base
+permalink: /profile/
+title: Profile
+search_exclude: false
+---
+<script>
+
+
+    const decode = token => decodeURIComponent(atob(token.split('.')[1].replace('-', '+').replace('_', '/')).split('').map(c => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`).join(''));
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    email = (JSON.parse(decode(getCookie("token")))).sub;
+    id = ((JSON.parse(decode(getCookie("token")))).id).toString();
+    console.log(id);
+
+        date = new Date();
+        day = date.getDate();
+        month = date.getMonth() + 1;
+        year = (date.getFullYear()) -2000;
+        currentDate = `0${month}-${day}-${year}`;
+        console.log(currentDate)
+    
+    function update() {
+        //pull from backend and update values
+        // placeholders
+        var requestOptions = {
+          method: 'GET',
+          redirect: 'follow'
+        };
+
+        fetch("http://localhost:8085/api/person/" + id, requestOptions)
+          .then(response => response.text())
+          .then(result => {
+            const stats = JSON.parse(result).stats[currentDate];
+            document.getElementById("welcome").innerHTML = "Welcome " + email + "!";
+            document.getElementById("steps").innerHTML = stats ? stats.steps : "N/A";
+            document.getElementById("calories").innerHTML = stats ? stats.calories : "N/A";
+          })
+          .catch(error => console.log('error', error));
+        //placeholders
+        document.getElementById("welcome").innerHTML = "Welcome " + email + "!";
+        document.getElementById("steps").innerHTML = steps;
+        document.getElementById("calories").innerHTML = calories;
+    }
+    function edit() {
+        steps = prompt("enter steps count: ")
+        calories = prompt("enter calories burnt: ")
+
+        document.getElementById("steps").innerHTML = steps;
+        document.getElementById("calories").innerHTML = calories;
+    }
+    function post() {
+        console.log(currentDate);
+        steps = document.getElementById("steps").innerHTML;
+        calories = document.getElementById("calories").innerHTML;
+        
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+          "id": id,
+          "date": currentDate,
+          "steps": steps,
+          "calories": calories
+        });
+
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+        fetch("http://localhost:8085/api/person/setStats", requestOptions)
+          .then(response => response.text())
+          .then(result => alert("stats updated!"))
+          .catch(error => console.log('error', error));
+    }
+    function delUser() {
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var requestOptions = {
+          method: 'DELETE',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+        fetch("http://localhost:8085/api/person/delete?email=" + email, requestOptions)
+          .then(response => response.text())
+          .then(data => {
+                console.log(data);
+                if (data.status!=401 || data.status!=400) {
+                    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    alert("user deleted!")
+                    window.location.replace("/Lesson_Frontend/sign_in/");
+                } else {
+                    console.log("bad email and password");
+                }
+          })
+          .catch(error => console.log('error', error));        
+    }
+    function signOut() {
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        alert("signed out!")
+        window.location.replace("/Lesson_Frontend/sign_in/");   
+    }
+</script>
+
+<body onload="update()">
+<div style="height: 500px; width: 500px; background-color: blueviolet;">
+    <div style="Font-size: 32px; text-align: center; height: auto; width: 500px; padding: 10px; position: relative;">
+        Profile
+    </div>
+    <div style="text-align: center; height: auto; width: 500px; padding: 10px; position: relative;">
+        <div style="font-size: 18px;" id="welcome">Welcome!</div>
+        <div style="font-size: 18px;">Number of steps: </div><div id="steps"></div>
+        <div style="font-size: 18px;">Calories burnt: </div><div id="calories"></div>
+        <button onClick="update()">Refresh</button>
+        <div></div>
+        <button onClick="edit()">Edit</button>
+        <button onClick="post()">Update</button>
+        <div></div>
+        <button onClick="signOut()">Sign Out</button>
+        <div></div>
+        <button onClick="delUser()">Delete user</button>
+    </div>
+</div>
+
+<script>
+</script>
+</body>
